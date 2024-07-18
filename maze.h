@@ -5,6 +5,8 @@
 #include <SDL2/SDL_image.h>
 #include <math.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 /* Constants */
 
@@ -34,28 +36,48 @@ typedef struct {
 
 // Structure to hold the game's state
 typedef struct {
-	    SDL_Window* window;
-	    SDL_Renderer* renderer;
-	    Player player;
-	    bool isRunning;
-    	    int map[MAP_NUM_ROWS][MAP_NUM_COLS];
+	SDL_Window* window;
+	SDL_Renderer* renderer;
+	Player player;
+	bool isRunning;
+	int map[MAP_NUM_ROWS][MAP_NUM_COLS];
 } Game;
 
-// Initialization and shutdown
+typedef struct {
+	    double distance;
+	        bool isVertical;
+} Ray;
+
+/* function Declarations */
+
+// game.c
 bool initializeGame(Game* game);
 void shutdownGame(Game* game);
-
-// Event handling
-void handleInput(Game* game);
-
 void updateGame(Game* game);
-
+void cleanUp(Game* game);
 void renderGame(Game* game);
-void renderMap(Game* game);
-void renderPlayer(Game* game);
 
-double normalizeAngle(double angle);
-bool isInsideMap(double x, double y);
+// input.c
+void handleInput(Game* game);
+void processInput(Game* game);
+
+// player.c
+void renderPlayer(Game* game);
+void movePlayer(Game* game, double newX, double newY);
 bool hasWallAt(Game* game, double x, double y);
+double normalizeAngle(double angle);
+double distanceBetweenPoints(double x1, double y1, double x2, double y2);double normalizeAngle(double angle);
+
+// map.c
+void initializeMap(Game* game);
+void renderMap(Game* game);
+void loadMapFromFile(Game* game, const char* filename);
+
+// raycasting.c
+void castAllRays(Game* game);
+void renderWallSlice(Game* game, Ray ray, int stripId);
+void render3DProjection(Game* game);
+void renderRays(Game* game, Ray rays[]);
+double castRay(Game* game, double rayAngle, bool *isVerticalHit);
 
 #endif

@@ -44,6 +44,17 @@ void shutdownGame(Game* game) {
 	SDL_DestroyWindow(game->window);
 	SDL_Quit();
 }
+void updateGame(Game* game) {
+    	game->player.rotationAngle += game->player.turnDirection * game->player.turnSpeed * (1.0 / 60);
+	double moveStep = game->player.walkDirection * game->player.walkSpeed * (1.0 / 60);
+	double newPlayerX = game->player.x + cos(game->player.rotationAngle) * moveStep;
+	double newPlayerY = game->player.y + sin(game->player.rotationAngle) * moveStep;
+
+	if (!hasWallAt(newPlayerX, newPlayerY, game)) {
+		game->player.x = newPlayerX;
+		game->player.y = newPlayerY;
+	}
+}
 
 void renderGame(Game* game) {
 	SDL_SetRenderDrawColor(game->renderer, 0, 0, 0, 255);
